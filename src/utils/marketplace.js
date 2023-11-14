@@ -66,7 +66,7 @@ export const createProductAction = async (senderAddress, product) => {
     onComplete: algosdk.OnApplicationComplete.NoOpOC,
     approvalProgram: compiledApprovalProgram,
     clearProgram: compiledClearProgram,
-    numLocalInts: numLocalInts,
+    // numLocalInts: numLocalInts,
     numLocalByteSlices: numLocalBytes,
     numGlobalInts: numGlobalInts,
     numGlobalByteSlices: numGlobalBytes,
