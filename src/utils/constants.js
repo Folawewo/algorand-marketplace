@@ -36,4 +36,5 @@ export const numLocalBytes = 0;
 // Maximum global storage allocation, immutable
 export const numGlobalInts = 2; 
 export const numGlobalBytes = 3; 
+export const ALGORAND_DECIMALS = 6;
 
