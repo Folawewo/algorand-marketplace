@@ -26,11 +26,3 @@ This feature allows users to sort the products by their price in either ascendin
 - **Search**: Users can type a product name into the search bar to filter the product list. The list updates dynamically with each keystroke.
 - **Sort**: Users can click either the "Sort Ascending" or "Sort Descending" button to reorder the product list based on price.
 
-## Future Enhancements
-- Implement server-side search and sorting for improved performance with large datasets.
-- Add category filters to allow users to view products in specific categories.
-- Introduce a rating and review system for products.
-
----
-
-For any additional information or support, please contact the development team.
