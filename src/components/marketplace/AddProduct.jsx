@@ -17,6 +17,7 @@ const AddProduct = ({ createProduct }) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
   return (
     <>
       <Button

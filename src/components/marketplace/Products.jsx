@@ -36,6 +36,7 @@ const Products = ({ address, fetchBalance }) => {
   useEffect(() => {
     getProducts();
   }, []);
+
   const createProduct = async (data) => {
     try {
       setLoading(true);
@@ -54,6 +55,7 @@ const Products = ({ address, fetchBalance }) => {
       setLoading(false);
     }
   };
+
   const buyProduct = async (product, count) => {
     try {
       setLoading(true);
@@ -68,6 +70,7 @@ const Products = ({ address, fetchBalance }) => {
       setLoading(false);
     }
   };
+
   const deleteProduct = async (product) => {
     try {
       setLoading(true);
@@ -82,6 +85,7 @@ const Products = ({ address, fetchBalance }) => {
       setLoading(false);
     }
   };
+
   if (loading) {
     return <Loader />;
   }
