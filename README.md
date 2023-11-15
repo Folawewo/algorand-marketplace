@@ -1,31 +1,36 @@
-# Getting Started with Create React App
+# Marketplace Application - New Features
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
+This document provides information about the new features added to the Marketplace application, specifically in the `Products` component. These enhancements aim to improve user experience by allowing easier navigation and interaction with the product listings.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+### 1. Search Functionality
+The search feature allows users to quickly find products by their name. As the user types in the search field, the product list updates in real-time to display only those products that match the search term. This feature is particularly useful in scenarios where the product list is extensive.
 
-### `npm start`
+#### Implementation Details
+- A search input field is integrated into the `Products` component.
+- The `useState` hook is used to manage the search term entered by the user.
+- The `useEffect` hook monitors changes to the search term and filters the displayed products accordingly.
+- Products are filtered on the client side for real-time responsiveness.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 2. Sorting by Price
+This feature allows users to sort the products by their price in either ascending or descending order. Two buttons are provided for users to select their preferred sorting order.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### Implementation Details
+- Two buttons are added to the `Products` component for sorting: "Sort Ascending" and "Sort Descending."
+- The sorting function reorders the products based on the price while preserving other attributes.
+- Sorting is performed on the client side and can be instantly switched between ascending and descending.
 
-### `npm test`
+## Usage
+- **Search**: Users can type a product name into the search bar to filter the product list. The list updates dynamically with each keystroke.
+- **Sort**: Users can click either the "Sort Ascending" or "Sort Descending" button to reorder the product list based on price.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Future Enhancements
+- Implement server-side search and sorting for improved performance with large datasets.
+- Add category filters to allow users to view products in specific categories.
+- Introduce a rating and review system for products.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
+For any additional information or support, please contact the development team.
