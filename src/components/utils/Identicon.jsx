@@ -1,9 +1,10 @@
 import Identicon from 'react-identicons';
+
 import PropTypes from "prop-types";
 
 const AddressIdenticon = ({size, address, ...rest}) => (
     <div {...rest} style={{width: `${size}px`, height: `${size}px`}}>
-        <Identicon string={address} size={30}  />
+         <Identicon string={address} size={30}  />
     </div>
 );
 
