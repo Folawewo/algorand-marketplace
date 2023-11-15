@@ -6,7 +6,7 @@ This document provides information about the new features added to the Marketpla
 ## Prerequisites
 - Ensure that Git and Node.js are installed on your system.
 - Clone the Repository: Use the command `git clone https://github.com/Folawewo/algorand-marketplace.git` to clone the project to your local machine.
-- Navigate to the Project Directory: After cloning, use cd [algorand-marketplace] to navigate into the project directory and run `npm install`.
+- Navigate to the Project Directory: After cloning, use cd `algorand-marketplace` to navigate into the project directory and run `npm install`.
 
 ## Features
 
