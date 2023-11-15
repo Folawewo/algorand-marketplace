@@ -7,6 +7,8 @@ import Wallet from "./components/Wallet";
 import { Container, Nav } from "react-bootstrap";
 import { indexerClient, myAlgoConnect } from "./utils/constants";
 import coverImg from "./assets/img/sandwich.jpg";
+import Products from "./components/marketplace/Products";
+import {Notification} from "./components/utils/Notifications";
 
 const App = function AppWrapper() {
   const [address, setAddress] = useState(null);
@@ -48,7 +50,7 @@ const App = function AppWrapper() {
   };
   return (
     <>
-      {/* <Notification /> */}
+      <Notification />
       {address ? (
         <Container fluid="md">
           <Nav className="justify-content-end pt-3 pb-5">
@@ -63,7 +65,7 @@ const App = function AppWrapper() {
             </Nav.Item>
           </Nav>
           <main>
-            {/* <Products address={address} fetchBalance={fetchBalance}/> */}
+            <Products address={address} fetchBalance={fetchBalance}/>
           </main>
         </Container>
       ) : (
