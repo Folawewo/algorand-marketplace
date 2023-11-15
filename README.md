@@ -3,6 +3,11 @@
 ## Overview
 This document provides information about the new features added to the Marketplace application, specifically in the `Products` component. These enhancements aim to improve user experience by allowing easier navigation and interaction with the product listings.
 
+## Prerequisites
+- Ensure that Git and Node.js are installed on your system.
+- Clone the Repository: Use the command `git clone https://github.com/Folawewo/algorand-marketplace.git` to clone the project to your local machine.
+- Navigate to the Project Directory: After cloning, use cd [algorand-marketplace] to navigate into the project directory and run `npm install`.
+
 ## Features
 
 ### 1. Search Functionality
