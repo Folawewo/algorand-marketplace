@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/Folawewo/algorand-marketplace.git/static/css/main.44554e36.css",
+    "main.js": "/Folawewo/algorand-marketplace.git/static/js/main.742318c6.js",
+    "static/js/787.c641d5a5.chunk.js": "/Folawewo/algorand-marketplace.git/static/js/787.c641d5a5.chunk.js",
+    "static/media/sandwich.jpg": "/Folawewo/algorand-marketplace.git/static/media/sandwich.2d3124493c86046cf64a.jpg",
+    "static/media/bootstrap-icons.woff?": "/Folawewo/algorand-marketplace.git/static/media/bootstrap-icons.449ad8adf6ae0424b7ed.woff",
+    "static/media/bootstrap-icons.woff2?": "/Folawewo/algorand-marketplace.git/static/media/bootstrap-icons.dea24bf5a7646d8b84e7.woff2",
+    "index.html": "/Folawewo/algorand-marketplace.git/index.html",
+    "main.44554e36.css.map": "/Folawewo/algorand-marketplace.git/static/css/main.44554e36.css.map",
+    "main.742318c6.js.map": "/Folawewo/algorand-marketplace.git/static/js/main.742318c6.js.map",
+    "787.c641d5a5.chunk.js.map": "/Folawewo/algorand-marketplace.git/static/js/787.c641d5a5.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.44554e36.css",
+    "static/js/main.742318c6.js"
+  ]
+}
