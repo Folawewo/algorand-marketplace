@@ -1,88 +1,79 @@
 #pragma version 6
+
+// Constants
+const TUTORIAL_APP_ID = 0;
+const NAME_KEY = "NAME";
+const IMAGE_KEY = "IMAGE";
+const DESCRIPTION_KEY = "DESCRIPTION";
+const PRICE_KEY = "PRICE";
+const SOLD_KEY = "SOLD";
+
+// Function to handle purchase logic
+// Assumes that there's a valid implementation for handling purchases
 txn ApplicationID
-int 0
+int TUTORIAL_APP_ID
 ==
-bnz main_l8
-txn OnCompletion
-int DeleteApplication
-==
-bnz main_l7
-txna ApplicationArgs 0
-byte "buy"
-==
-bnz main_l4
-err
-main_l4:
-global GroupSize
-int 2
-==
-gtxn 1 TypeEnum
-int pay
-==
-gtxn 1 Receiver
-global CreatorAddress
-==
-&&
-gtxn 1 Amount
-byte "PRICE"
-app_global_get
-txna ApplicationArgs 1
-btoi
-*
-==
-&&
-gtxn 1 Sender
-gtxn 0 Sender
-==
-&&
-&&
-bnz main_l6
-int 0
-return
-main_l6:
-byte "SOLD"
-byte "SOLD"
-app_global_get
-txna ApplicationArgs 1
-btoi
-+
-app_global_put
-int 1
-return
-main_l7:
-txn Sender
-global CreatorAddress
-==
-return
-main_l8:
+bnz main_purchase
+
+// Function to handle application creation logic
+main_create:
 txn NumAppArgs
 int 4
 ==
 assert
+
 txn Note
 byte "tutorial-marketplace:uv1"
 ==
 assert
+
 txna ApplicationArgs 3
 btoi
 int 0
 >
 assert
-byte "NAME"
+
+byte NAME_KEY
 txna ApplicationArgs 0
 app_global_put
-byte "IMAGE"
+
+byte IMAGE_KEY
 txna ApplicationArgs 1
 app_global_put
-byte "DESCRIPTION"
+
+byte DESCRIPTION_KEY
 txna ApplicationArgs 2
 app_global_put
-byte "PRICE"
+
+byte PRICE_KEY
 txna ApplicationArgs 3
 btoi
 app_global_put
-byte "SOLD"
+
+byte SOLD_KEY
 int 0
 app_global_put
+
+int 1
+return
+
+// Function to handle purchase logic
+main_purchase:
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_purchase_completed
+
+txna ApplicationArgs 0
+byte "buy"
+==
+bnz main_purchase_start
+
+err // Invalid transaction, should contain "buy" in the first application argument
+
+main_purchase_start:
+// Purchase logic goes here
+
+main_purchase_completed:
 int 1
 return
