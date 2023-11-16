@@ -1,18 +1,28 @@
 #pragma version 6
+
+// Check if the application ID is valid
 txn ApplicationID
 int 0
 ==
 bnz main_l8
+
+// Check if the OnCompletion action is valid
 txn OnCompletion
 int DeleteApplication
 ==
 bnz main_l7
+
+// Check if the first application argument is equal to "buy"
 txna ApplicationArgs 0
 byte "buy"
 ==
 bnz main_l4
+
+// Throw an error if the application args are not valid
 err
 main_l4:
+
+// Check if the group size is equal to 2
 global GroupSize
 int 2
 ==
@@ -37,9 +47,14 @@ gtxn 0 Sender
 &&
 &&
 bnz main_l6
+
+// Return an error if the payment is not valid
 int 0
 return
+
 main_l6:
+
+// Update the SOLD value if the item has been sold
 byte "SOLD"
 byte "SOLD"
 app_global_get
@@ -47,42 +62,187 @@ txna ApplicationArgs 1
 btoi
 +
 app_global_put
+
+// Return a success code if the item has been sold
 int 1
 return
+
 main_l7:
+
+// Check if the sender is the creator of the application
 txn Sender
 global CreatorAddress
 ==
 return
+
 main_l8:
+
+// Check if the number of application arguments is equal to 4
 txn NumAppArgs
 int 4
 ==
 assert
+
+// Check if the note is equal to "tutorial-marketplace:uv1"
 txn Note
 byte "tutorial-marketplace:uv1"
 ==
 assert
+
+// Check if the price is greater than 0
 txna ApplicationArgs 3
 btoi
 int 0
 >
 assert
+
+// Store the item name, image, description, and price
 byte "NAME"
 txna ApplicationArgs 0
 app_global_put
+#pragma version 6
+
+// Check if the application ID is valid
+txn ApplicationID
+int 0
+==
+bnz main_l8
+
+// Check if the OnCompletion action is valid
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l7
+
+// Check if the first application argument is equal to "buy"
+txna ApplicationArgs 0
+byte "buy"
+==
+bnz main_l4
+
+// Throw an error if the application args are not valid
+err
+main_l4:
+
+// Check if the group size is equal to 2
+global GroupSize
+int 2
+==
+gtxn 1 TypeEnum
+int pay
+==
+gtxn 1 Receiver
+global CreatorAddress
+==
+&&
+gtxn 1 Amount
+byte "PRICE"
+app_global_get
+txna ApplicationArgs 1
+btoi
+*
+==
+&&
+gtxn 1 Sender
+gtxn 0 Sender
+==
+&&
+&&
+bnz main_l6
+
+// Return an error if the payment is not valid
+int 0
+return
+
+main_l6:
+
+// Update the SOLD value if the item has been sold
+byte "SOLD"
+byte "SOLD"
+app_global_get
+txna ApplicationArgs 1
+btoi
++
+app_global_put
+
+// Return a success code if the item has been sold
+int 1
+return
+
+main_l7:
+
+// Check if the sender is the creator of the application
+txn Sender
+global CreatorAddress
+==
+return
+
+main_l8:
+
+// Check if the number of application arguments is equal to 4
+txn NumAppArgs
+int 4
+==
+assert
+
+// Check if the note is equal to "tutorial-marketplace:uv1"
+txn Note
+byte "tutorial-marketplace:uv1"
+==
+assert
+
+// Check if the price is greater than 0
+txna ApplicationArgs 3
+btoi
+int 0
+>
+assert
+
+// Store the item name, image, description, and price
+byte "NAME"
+txna ApplicationArgs 0
+app_global_put
+
 byte "IMAGE"
 txna ApplicationArgs 1
 app_global_put
+
 byte "DESCRIPTION"
 txna ApplicationArgs 2
 app_global_put
+
 byte "PRICE"
 txna ApplicationArgs 3
 btoi
 app_global_put
+
+// Set the SOLD value to 0
 byte "SOLD"
 int 0
 app_global_put
+
+// Return a success code if the item has been created
+int 1
+return
+
+byte "IMAGE"
+txna ApplicationArgs 1
+app_global_put
+
+byte "DESCRIPTION"
+txna ApplicationArgs 2
+app_global_put
+
+byte "PRICE"
+txna ApplicationArgs 3
+btoi
+app_global_put
+
+// Set the SOLD value to 0
+byte "SOLD"
+int 0
+app_global_put
+
+// Return a success code if the item has been created
 int 1
 return
