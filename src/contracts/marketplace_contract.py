@@ -1,6 +1,5 @@
 from pyteal import *
 
-
 class Product:
     class Variables:
         name = Bytes("NAME")
@@ -37,7 +36,8 @@ class Product:
         )
 
         can_buy = And(valid_number_of_transactions,
-                      valid_payment_to_seller)
+                      valid_payment_to_seller,
+                      Btoi(count) > Int(0))
 
         update_state = Seq([
             App.globalPut(self.Variables.sold, App.globalGet(self.Variables.sold) + Btoi(count)),
