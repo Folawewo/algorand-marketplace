@@ -1,6 +1,5 @@
 from pyteal import *
 
-
 class Product:
     class Variables:
         name = Bytes("NAME")
@@ -25,19 +24,20 @@ class Product:
             Approve()
         ])
 
-    def buy(self):
-        count = Txn.application_args[1]
-        valid_number_of_transactions = Global.group_size() == Int(2)
-
-        valid_payment_to_seller = And(
+    def validate_payment(self, count):
+        return And(
             Gtxn[1].type_enum() == TxnType.Payment,
             Gtxn[1].receiver() == Global.creator_address(),
             Gtxn[1].amount() == App.globalGet(self.Variables.price) * Btoi(count),
             Gtxn[1].sender() == Gtxn[0].sender(),
         )
 
-        can_buy = And(valid_number_of_transactions,
-                      valid_payment_to_seller)
+    def buy(self):
+        count = Txn.application_args[1]
+        valid_number_of_transactions = Global.group_size() == Int(2)
+        valid_payment_to_seller = self.validate_payment(count)
+
+        can_buy = And(valid_number_of_transactions, valid_payment_to_seller)
 
         update_state = Seq([
             App.globalPut(self.Variables.sold, App.globalGet(self.Variables.sold) + Btoi(count)),
