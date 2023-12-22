@@ -11,12 +11,22 @@ class Product:
 
     class AppMethods:
         buy = Bytes("buy")
-
+    # This function creates a new product
     def application_creation(self):
         return Seq([
-            Assert(Txn.application_args.length() == Int(4)),
             Assert(Txn.note() == Bytes("tutorial-marketplace:uv1")),
-            Assert(Btoi(Txn.application_args[3]) > Int(0)),
+            # Checks that the number of input arguments sent is equal to four
+            ## Checks the input data to ensure that they meet certain criterias
+            Assert(
+                And(
+                    Txn.application_args.length() == Int(4),
+                    Len(Txn.application_args[0]) > Int(0),
+                    Len(Txn.application_args[1]) > Int(0),
+                    Len(Txn.application_args[2]) > Int(0),
+                    Btoi(Txn.application_args[3]) > Int(0),
+                )
+            ),
+            # store txn arguments in global state
             App.globalPut(self.Variables.name, Txn.application_args[0]),
             App.globalPut(self.Variables.image, Txn.application_args[1]),
             App.globalPut(self.Variables.description, Txn.application_args[2]),
@@ -24,16 +34,18 @@ class Product:
             App.globalPut(self.Variables.sold, Int(0)),
             Approve()
         ])
-
+    # This function allows users to buy a product from the marketplace
     def buy(self):
         count = Txn.application_args[1]
         valid_number_of_transactions = Global.group_size() == Int(2)
-
+        # Sanity checks to prevent unexpected scenarios and misleading state changes
         valid_payment_to_seller = And(
             Gtxn[1].type_enum() == TxnType.Payment,
             Gtxn[1].receiver() == Global.creator_address(),
             Gtxn[1].amount() == App.globalGet(self.Variables.price) * Btoi(count),
             Gtxn[1].sender() == Gtxn[0].sender(),
+            # - User is not creator
+            Gtxn[1].sender() != Global.creator_address(),
         )
 
         can_buy = And(valid_number_of_transactions,
