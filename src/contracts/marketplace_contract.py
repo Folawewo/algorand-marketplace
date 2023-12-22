@@ -20,7 +20,6 @@ class Product:
             Assert(
                 And(
                     Txn.application_args.length() == Int(4),
-                    Txn.note() == Bytes("aucspace:uv1"),
                     Len(Txn.application_args[0]) > Int(0),
                     Len(Txn.application_args[1]) > Int(0),
                     Len(Txn.application_args[2]) > Int(0),
