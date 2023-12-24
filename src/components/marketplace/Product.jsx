@@ -7,6 +7,7 @@ import { Rating } from '@mui/material';
 
 const Product = ({ address, product, buyProduct, deleteProduct, rateProduct }) => {
     const { name, image, description, price, sold, appId, owner, totalRating, numRatings } = product;
+    const averageRating = numRatings > 0 ? totalRating / numRatings : 0;
     const [count, setCount] = useState(1);
     const [userRating, setUserRating] = useState(0);
 
