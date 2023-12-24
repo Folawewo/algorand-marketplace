@@ -21,25 +21,25 @@ const Products = ({ address, fetchBalance }) => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const getProducts = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
             const fetchedProducts = await getProductsAction();
-            if (!fetchedProducts) {
-                return;
-            }
             setProducts(fetchedProducts);
             setDisplayedProducts(fetchedProducts); // Initialize displayed products
         } catch (e) {
-            console.log({ e });
+            console.error(e);
+            toast(<NotificationError text="Failed to fetch products." />);
         } finally {
             setLoading(false);
         }
     };
 
+    // Fetch products initially and when certain events occur
     useEffect(() => {
         getProducts();
     }, []);
 
+    // Handle search term change
     useEffect(() => {
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
