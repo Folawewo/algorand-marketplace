@@ -4,7 +4,13 @@ import AddProduct from "./AddProduct";
 import Product from "./Product";
 import Loader from "../utils/Loader";
 import { NotificationError, NotificationSuccess } from "../utils/Notifications";
-import { buyProductAction, createProductAction, deleteProductAction, getProductsAction } from "../../utils/marketplace";
+import {
+    buyProductAction,
+    createProductAction,
+    deleteProductAction,
+    getProductsAction,
+    rateProductAction 
+} from "../../utils/marketplace";
 import PropTypes from "prop-types";
 import { Row, FormControl, InputGroup, Button } from "react-bootstrap";
 
@@ -17,12 +23,12 @@ const Products = ({ address, fetchBalance }) => {
     const getProducts = async () => {
         try {
             setLoading(true);
-            const products = await getProductsAction();
-            if (!products) {
+            const fetchedProducts = await getProductsAction();
+            if (!fetchedProducts) {
                 return;
             }
-            setProducts(products);
-            setDisplayedProducts(products); // Initialize displayed products
+            setProducts(fetchedProducts);
+            setDisplayedProducts(fetchedProducts); // Initialize displayed products
         } catch (e) {
             console.log({ e });
         } finally {
@@ -35,7 +41,6 @@ const Products = ({ address, fetchBalance }) => {
     }, []);
 
     useEffect(() => {
-        // Filter products whenever the search term changes
         const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -48,6 +53,7 @@ const Products = ({ address, fetchBalance }) => {
         });
         setDisplayedProducts(sortedProducts);
     };
+
     const createProduct = async (data) => {
         try {
             setLoading(true);
@@ -58,7 +64,7 @@ const Products = ({ address, fetchBalance }) => {
         } catch (error) {
             console.log(error);
             toast(<NotificationError text={error?.message || "Failed to create a product."}/>);
-        }finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -71,7 +77,7 @@ const Products = ({ address, fetchBalance }) => {
             getProducts();
             fetchBalance(address);
         } catch (error) {
-            console.log(error)
+            console.log(error);
             toast(<NotificationError text="Failed to purchase product."/>);
         } finally {
             setLoading(false);
@@ -86,47 +92,61 @@ const Products = ({ address, fetchBalance }) => {
             getProducts();
             fetchBalance(address);
         } catch (error) {
-            console.log(error)
+            console.log(error);
             toast(<NotificationError text="Failed to delete product."/>);
         } finally {
             setLoading(false);
         }
     };
 
-if (loading) {
-    return <Loader />;
-}
+    const rateProduct = async (product, rating) => {
+        try {
+            setLoading(true);
+            await rateProductAction(address, product, rating);
+            toast(<NotificationSuccess text="Product rated successfully"/>);
+            await getProducts(); 
+        } catch (error) {
+            console.error(error);
+            toast(<NotificationError text="Failed to rate product."/>);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-return (
-    <>
-        <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1 className="fs-4 fw-bold mb-0">Street Food</h1>
-            <AddProduct createProduct={createProduct} />
-        </div>
+    if (loading) {
+        return <Loader />;
+    }
 
-        {/* Search and Sort UI */}
-        <InputGroup className="mb-3">
-            <FormControl
-                placeholder="Search Products"
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button onClick={() => sortProductsByPrice(true)}>Sort Ascending</Button>
-            <Button onClick={() => sortProductsByPrice(false)}>Sort Descending</Button>
-        </InputGroup>
+    return (
+        <>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h1 className="fs-4 fw-bold mb-0">Street Food</h1>
+                <AddProduct createProduct={createProduct} />
+            </div>
 
-        <Row xs={1} sm={2} lg={3} className="g-3 mb-5 g-xl-4 g-xxl-5">
-            {displayedProducts.map((product, index) => (
-                <Product
-                    address={address}
-                    product={product}
-                    buyProduct={buyProduct}
-                    deleteProduct={deleteProduct}
-                    key={index}
+            <InputGroup className="mb-3">
+                <FormControl
+                    placeholder="Search Products"
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
-            ))}
-        </Row>
-    </>
-);
+                <Button onClick={() => sortProductsByPrice(true)}>Sort Ascending</Button>
+                <Button onClick={() => sortProductsByPrice(false)}>Sort Descending</Button>
+            </InputGroup>
+
+            <Row xs={1} sm={2} lg={3} className="g-3 mb-5 g-xl-4 g-xxl-5">
+                {displayedProducts.map((product, index) => (
+                    <Product
+                        address={address}
+                        product={product}
+                        buyProduct={buyProduct}
+                        deleteProduct={deleteProduct}
+                        rateProduct={rateProduct}
+                        key={index}
+                    />
+                ))}
+            </Row>
+        </>
+    );
 };
 
 Products.propTypes = {

@@ -8,9 +8,12 @@ class Product:
         description = Bytes("DESCRIPTION")
         price = Bytes("PRICE")
         sold = Bytes("SOLD")
+        totalRating = Bytes("TOTAL_RATING")
+        numRatings = Bytes("NUM_RATINGS")
 
     class AppMethods:
         buy = Bytes("buy")
+        rate = Bytes("rate")
 
     def application_creation(self):
         return Seq([
@@ -22,8 +25,23 @@ class Product:
             App.globalPut(self.Variables.description, Txn.application_args[2]),
             App.globalPut(self.Variables.price, Btoi(Txn.application_args[3])),
             App.globalPut(self.Variables.sold, Int(0)),
+            App.globalPut(self.Variables.totalRating, Int(0)),
+            App.globalPut(self.Variables.numRatings, Int(0)),
             Approve()
         ])
+    
+    def rate(self):
+        rating = Btoi(Txn.application_args[1])
+        valid_rating = And(rating > Int(0), rating <= Int(5))
+        
+        update_rating = Seq([
+            App.globalPut(self.Variables.totalRating, App.globalGet(self.Variables.totalRating) + rating),
+            App.globalPut(self.Variables.numRatings, App.globalGet(self.Variables.numRatings) + Int(1)),
+            Approve()
+        ])
+
+        return If(valid_rating).Then(update_rating).Else(Reject())
+
 
     def buy(self):
         count = Txn.application_args[1]
@@ -53,7 +71,8 @@ class Product:
         return Cond(
             [Txn.application_id() == Int(0), self.application_creation()],
             [Txn.on_completion() == OnComplete.DeleteApplication, self.application_deletion()],
-            [Txn.application_args[0] == self.AppMethods.buy, self.buy()]
+            [Txn.application_args[0] == self.AppMethods.buy, self.buy()],
+            [Txn.application_args[0] == self.AppMethods.rate, self.rate()]
         )
 
     def approval_program(self):

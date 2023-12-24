@@ -1,4 +1,5 @@
 import algosdk from "algosdk";
+import MyAlgoConnect from '@randlabs/myalgo-connect';
 import {
   algodClient,
   indexerClient,
@@ -34,6 +35,26 @@ const compileProgram = async (programSource) => {
   let programBytes = encoder.encode(programSource);
   let compileResponse = await algodClient.compile(programBytes).do();
   return new Uint8Array(Buffer.from(compileResponse.result, "base64"));
+};
+
+// Function to handle the signing and sending of transactions using MyAlgoConnect
+const signAndSendTransaction = async (txn) => {
+  const myAlgoWallet = new MyAlgoConnect();
+
+  try {
+    const signedTxn = await myAlgoWallet.signTransaction(txn.toByte());
+    await algodClient.sendRawTransaction(signedTxn.blob).do();
+
+    // Wait for confirmation
+    let txId = txn.txID().toString();
+    let confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
+    console.log("Transaction confirmed in round:", confirmedTxn["confirmed-round"]);
+    
+    return confirmedTxn;
+  } catch (error) {
+    console.error("Failed to sign and send transaction:", error);
+    throw error;
+  }
 };
 
 // CREATE PRODUCT: ApplicationCreateTxn
@@ -227,6 +248,24 @@ export const getProductsAction = async () => {
   }
   console.log("Products fetched.");
   return products;
+};
+
+export const rateProductAction = async (senderAddress, product, rating) => {
+  let params = await algodClient.getTransactionParams().do();
+
+  let rateArg = new TextEncoder().encode("rate");
+  let ratingArg = algosdk.encodeUint64(rating);
+  let appArgs = [rateArg, ratingArg];
+
+  let txn = algosdk.makeApplicationCallTxnFromObject({
+      from: senderAddress,
+      appIndex: product.appId,
+      onComplete: algosdk.OnApplicationComplete.NoOpOC,
+      suggestedParams: params,
+      appArgs: appArgs,
+  });
+
+  return await signAndSendTransaction(txn);
 };
 
 const getStatus = async () => {
