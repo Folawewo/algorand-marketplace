@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Badge, Button, Card, Col, FloatingLabel, Form, Stack } from "react-bootstrap";
 import { microAlgosToString, truncateAddress } from "../../utils/conversions";
@@ -7,14 +7,30 @@ import { Rating } from '@mui/material';
 
 const Product = ({ address, product, buyProduct, deleteProduct, rateProduct }) => {
     const { name, image, description, price, sold, appId, owner, totalRating, numRatings } = product;
-    const averageRating = numRatings > 0 ? totalRating / numRatings : 0;
     const [count, setCount] = useState(1);
     const [userRating, setUserRating] = useState(0);
+    const [isInWishlist, setIsInWishlist] = useState(false);
+
+    useEffect(() => {
+        const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        setIsInWishlist(wishlist.some(wishProduct => wishProduct.appId === product.appId));
+    }, [product]);
+
+    const toggleWishlist = () => {
+        let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        if (isInWishlist) {
+            wishlist = wishlist.filter(wishProduct => wishProduct.appId !== product.appId);
+        } else {
+            wishlist.push(product);
+        }
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        setIsInWishlist(!isInWishlist);
+    };
 
     const handleRateProduct = async () => {
-        if(userRating > 0) {
-            await rateProduct(product, userRating); 
-            setUserRating(0); 
+        if (userRating > 0) {
+            await rateProduct(product, userRating);
+            setUserRating(0);
         }
     };
 
@@ -24,23 +40,21 @@ const Product = ({ address, product, buyProduct, deleteProduct, rateProduct }) =
                 <Card.Header>
                     <Stack direction="horizontal" gap={2}>
                         <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
-                        <Identicon size={28} address={owner}/>
+                        <Identicon size={28} address={owner} />
                         <Badge bg="secondary" className="ms-auto">
                             {sold} Sold
                         </Badge>
                     </Stack>
                 </Card.Header>
                 <div className="ratio ratio-4x3">
-                    <img src={image} alt={name} style={{objectFit: "cover"}}/>
+                    <img src={image} alt={name} style={{ objectFit: "cover" }} />
                 </div>
                 <Card.Body className="d-flex flex-column text-center">
                     <Card.Title>{name}</Card.Title>
                     <Card.Text className="flex-grow-1">{description}</Card.Text>
-                    {/* Rating Display */}
                     <div className="mt-2">
                         <Rating name="read-only" value={totalRating / numRatings || 0} readOnly />
                     </div>
-                    {/* User Rating Interaction */}
                     <div className="rating-control">
                         <Rating
                             name="simple-controlled"
@@ -51,39 +65,33 @@ const Product = ({ address, product, buyProduct, deleteProduct, rateProduct }) =
                         />
                         <Button variant="primary" onClick={handleRateProduct}>Rate</Button>
                     </div>
-                    <Form className="d-flex align-content-stretch flex-row gap-2">
-                        <FloatingLabel
-                            controlId="inputCount"
-                            label="Count"
-                            className="w-25"
-                        >
-                            <Form.Control
-                                type="number"
-                                value={count}
-                                min="1"
-                                max="10"
-                                onChange={(e) => {
-                                    setCount(Number(e.target.value));
-                                }}
-                            />
-                        </FloatingLabel>
+                    <FloatingLabel controlId="inputCount" label="Count" className="mb-3">
+                        <Form.Control
+                            type="number"
+                            value={count}
+                            min="1"
+                            onChange={(e) => setCount(Number(e.target.value))}
+                        />
+                    </FloatingLabel>
+                    <Button
+                        variant="outline-dark"
+                        onClick={() => buyProduct(product, count)}
+                        className="py-3"
+                    >
+                        Buy for {microAlgosToString(price * count)} ALGO
+                    </Button>
+                    {product.owner === address &&
                         <Button
-                            variant="outline-dark"
-                            onClick={() => buyProduct(product, count)}
-                            className="w-75 py-3"
+                            variant="outline-danger"
+                            onClick={() => deleteProduct(product)}
+                            className="my-2"
                         >
-                            Buy for {microAlgosToString(price) * count} ALGO
+                            Delete Product
                         </Button>
-                        {product.owner === address &&
-                            <Button
-                                variant="outline-danger"
-                                onClick={() => deleteProduct(product)}
-                                className="btn"
-                            >
-                                <i className="bi bi-trash"></i>
-                            </Button>
-                        }
-                    </Form>
+                    }
+                    <Button variant="outline-secondary" onClick={toggleWishlist}>
+                        <i className={`bi bi-heart${isInWishlist ? '-fill' : ''}`}></i>
+                    </Button>
                 </Card.Body>
             </Card>
         </Col>
@@ -93,19 +101,19 @@ const Product = ({ address, product, buyProduct, deleteProduct, rateProduct }) =
 Product.propTypes = {
     address: PropTypes.string.isRequired,
     product: PropTypes.shape({
-        appId: PropTypes.number,
-        name: PropTypes.string,
-        image: PropTypes.string,
-        description: PropTypes.string,
-        price: PropTypes.number,
-        sold: PropTypes.number,
-        owner: PropTypes.string,
-        totalRating: PropTypes.number,
-        numRatings: PropTypes.number
+        appId: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        image: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        sold: PropTypes.number.isRequired,
+        owner: PropTypes.string.isRequired,
+        totalRating: PropTypes.number.isRequired,
+        numRatings: PropTypes.number.isRequired
     }).isRequired,
     buyProduct: PropTypes.func.isRequired,
     deleteProduct: PropTypes.func.isRequired,
-    rateProduct: PropTypes.func.isRequired, 
+    rateProduct: PropTypes.func.isRequired,
 };
 
 export default Product;
